@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\esto0\\source\\repos\\TruCatchHW\\TruCatchHW\\TruCatchHW.csproj",
+      "projectUniqueName": "C:\\Users\\esto0\\Documents\\OtsHWTryCatch\\TruCatchHW\\TruCatchHW\\TruCatchHW.csproj",
       "projectName": "TruCatchHW",
-      "projectPath": "C:\\Users\\esto0\\source\\repos\\TruCatchHW\\TruCatchHW\\TruCatchHW.csproj",
+      "projectPath": "C:\\Users\\esto0\\Documents\\OtsHWTryCatch\\TruCatchHW\\TruCatchHW\\TruCatchHW.csproj",
       "packagesPath": "C:\\Users\\esto0\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\esto0\\source\\repos\\TruCatchHW\\TruCatchHW\\obj\\",
+      "outputPath": "C:\\Users\\esto0\\Documents\\OtsHWTryCatch\\TruCatchHW\\TruCatchHW\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\esto0\\AppData\\Roaming\\NuGet\\NuGet.Config",
