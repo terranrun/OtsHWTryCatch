@@ -1,25 +1,64 @@
 ﻿
-
 try
 {
-Calculate();
 
-}catch
-{
-    Console.WriteLine("В калькуляторе произошла ошибка: текст ошибки");
+    Calculate();
 }
+catch(Exception ex)
+{
+    Console.WriteLine($"В калькуляторе произошла ошибка:{ex.Message} ") ;
+}
+
+
 
 
 void Calculate()
 {
-    do
-    {
-        List<object> values = GetNumber("Пожайлуйста, введите желаемые значения через пробел : ") ;
+
+    
+  do
+  {
+      try
+      {
+        List<object> values = GetNumber("Пожайлуйста, введите желаемые значения через пробел : ");
         int result = GetResult(values);
 
-        Console.WriteLine(result);
+        Console.WriteLine(result);       
+      }
+      catch (OverflowException)
+      {
+          Console.BackgroundColor = ConsoleColor.Blue;
+          Console.WriteLine("Результат выражения вышел за границы int");
+          Console.BackgroundColor = ConsoleColor.Black;
+      }
+      catch (RangeException)
+      {
+          Console.BackgroundColor = ConsoleColor.Black;
+      }
 
-    } while (AskContinue());
+      catch (OperatorException ex)
+      {
+          
+          Console.WriteLine("Укажите в выражении оператор: +,-,*,/   {0} - {1}", ex.Message, ex.Data["user"]);
+          Console.BackgroundColor = ConsoleColor.Black;
+      }
+
+      catch (FormatException)
+      {
+          Console.BackgroundColor = ConsoleColor.Magenta;
+          Console.WriteLine("операнд не является числом! Введите корректное число");
+          Console.BackgroundColor = ConsoleColor.Black;
+      }
+      catch (Exception)
+      {
+          Console.WriteLine("Я не смог обработать ошибку");
+          Console.WriteLine("Попробуй еще раз");
+          throw;
+      }
+   } while (AskContinue());
+
+    
+   
 }
 
 bool AskContinue()
@@ -45,30 +84,39 @@ int GetResult(List<object> values)
     string cmd = (string)values[1];
     int y = (int)values[2];
     
-    int result;
+    int result=0;
 
-    switch (cmd)
+    try
     {
-        case "+":
-            result = Sum(x,y);
-            break;
-        case "-":
-            result = Sub(x, y);
-            break;
-        case "*":
-            result = Mul(x, y);
-            break;
-        case "/":
-            result = Div(x, y);
-            break;
-        default:
-            result = 0;
-            break;
+
+        switch (cmd)
+        {
+            case "+":
+                result = Sum(x,y);
+                break;
+            case "-":
+                result = Sub(x, y);
+                break;
+            case "*":
+                result = Mul(x, y);
+                break;
+            case "/":
+                result = Div(x, y);
+                break;
+            default:
+                result = 0;
+                break;
+        }
+
+        if (result == 13)
+            throw new OperandThirteen("вы получили ответ 13!");// проблема
+        return result;
+
     }
-    if (result == 13)
-    {
-        throw new OperandThirteen("вы получили ответ 13!");
-    }
+     catch (OperandThirteen)
+        {
+            Console.BackgroundColor = ConsoleColor.Black;
+        }
     return result;
 
 }
@@ -94,10 +142,11 @@ int Div(int x, int y)
     {
         return x / y;
     }
-    catch(DivideByZeroException ex)
+    catch(DivideByZeroException)
     {
         Console.BackgroundColor = ConsoleColor.DarkMagenta;
         Console.WriteLine("Деление на ноль!");
+        Console.BackgroundColor = ConsoleColor.Black;
         return 0;
     }
 }
@@ -106,70 +155,28 @@ int Div(int x, int y)
 
 List<object> GetNumber(string text)
 {
-    List<object> str = new List<object>();
+    
     Console.WriteLine(text);
-    bool xDone = false;
-    try
+        
+    string UserInput = Console.ReadLine();
+    string[] values = UserInput.Split(' ');
+    if (values.Length != 3)
+        throw new RangeException("Выражение некорректное, попробуйте написать в формате \na + b\na - b\na * b\na / b");
+    int x = Int32.Parse(values[0]);
+    string cmd = values[1];
+    int y = Int32.Parse(values[2]);
+
+    if ((cmd != "+") && (cmd != "-") && (cmd != "*") && (cmd != "/") )
     {
-        while(xDone == false)
-        {
-            try
-            {
-                string UserInput = Console.ReadLine();
-                string[] values = UserInput.Split(' ');
-                if (values.Length != 3)
-                    throw new RangeException("Выражение некорректное, попробуйте написать в формате \na + b\na - b\na * b\na / b");
-                int x = Int32.Parse(values[0]);
-                string cmd = values[1];
-                int y = Int32.Parse(values[2]);
-               
-                if ((cmd != "+") && (cmd != "-") && (cmd != "*") && (cmd != "/"))
-                     throw new OperatorException($"Я пока не умею работать с оператором {cmd}");
-  
-                str = new List<object> { x, cmd, y };  
-               
-                xDone = true;
-                return str;
-
-            }
-            catch (OverflowException ex)
-            {
-                Console.BackgroundColor = ConsoleColor.Blue;
-                Console.WriteLine("Результат выражения вышел за границы int");
-            }
-            catch (RangeException)
-            {
-
-            }
-            catch(OperandThirteen)
-            {
-
-            }
-            catch(OperatorException)
-            {           
-                Console.WriteLine("Укажите в выражении оператор: +,-,*,/ ");
-            }
-           
-            catch (FormatException)
-            {
-                Console.BackgroundColor = ConsoleColor.Magenta;
-                Console.WriteLine("операнд не является числом! Введите корректное число");           
-            }
-            catch (Exception)
-            {
-                Console.WriteLine("Я не смог обработать ошибку");
-                Console.WriteLine("Попробуй еще раз");
-                throw;
-            }
-        }
-        return str;
+        var exception = new OperatorException($"Я пока не умею работать с оператором {cmd}");
+        exception.Data.Add("user", "Name of operator");
+        throw exception;
     }
-    catch 
-    {
-        Console.WriteLine("------------");
-        return str;
-    }
+    
+   
+    List<object> str = new List<object> { x, cmd, y };  
 
+    return str;
 }
 
 public class RangeException: Exception
