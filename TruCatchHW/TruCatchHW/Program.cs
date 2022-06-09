@@ -67,7 +67,7 @@ bool AskContinue()
     {
         Console.WriteLine("не хочешь продолжать? напиши STOP");
         var status = Console.ReadLine();
-        if (status == "STOP" || status == "stop" || status == "Stop")
+        if (status.ToLower() == "stop")
             return false;     
         else
         {
